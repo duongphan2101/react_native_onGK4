@@ -1,208 +1,70 @@
-import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, FlatList, Dimensions } from 'react-native';
-import axios from 'axios';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Icon from 'react-native-vector-icons/EvilIcons.js';
+import Icon2 from 'react-native-vector-icons/FontAwesome';
+import HomeScreen from './screen/Home';
+import LoginScreen from './screen/Login';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { useState, useEffect } from 'react';
+const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
+
+function TabNavigator() {
+  return (
+      <Tab.Navigator initialRouteName='Home'
+        screenOptions={{
+          tabBarStyle: { backgroundColor: '#5958b2', paddingTop: 10 },
+          tabBarActiveTintColor: 'gold',
+          tabBarInactiveTintColor: 'white',
+        }}
+      >
+        <Tab.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{
+            headerShown: false,
+            tabBarIcon: ({ color }) => <Icon2 name="home" size={30} color={color} />,
+          }}
+        />
+        <Tab.Screen
+          name="Explore"
+          component={HomeScreen}
+          options={{
+            headerShown: false,
+            tabBarIcon: ({ color }) => <Icon2 name="wpexplorer" size={28} color={color} />,
+          }}
+        />
+        <Tab.Screen
+          name="Search"
+          component={HomeScreen}
+          options={{
+            tabBarIcon: ({ color }) => <Icon name="search" size={30} color={color} />,
+          }}
+        />
+        <Tab.Screen
+          name="Profile"
+          component={HomeScreen}
+          options={{
+            tabBarIcon: ({ color }) => <Icon name="user" size={30} color={color} />,
+          }}
+        />
+      </Tab.Navigator>
+  )}
 
 export default function App() {
-
-  const [category, setCategory] = useState([]);
-  const [location, setLocation] = useState([]);
-  const screenWidth = Dimensions.get('window').width;
-  useEffect(() => {
-       axios.get('https://671d0c3909103098807c1347.mockapi.io/category').then((response) => {
-        setCategory(response.data);
-       });
-       axios.get('https://671d0c3909103098807c1347.mockapi.io/location').then((response) => {
-        setLocation(response.data);
-       });
-    }, []);
-  const numColumns = 4;
   return (
-    <View style={styles.container}>
- 
-      <View style={styles.header}>
-        <Image source={require('./assets/logoicon.png')}/>
-        <View style={styles.input}>
-          <TextInput placeholder="search here ..." placeholderTextColor='black' />
-          <Image style={{height: 30, width: 30}} source={require('./assets/searchicon.png')}/>
-        </View>
-      </View>
-
-      <View style={styles.nav}>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Image style={{height: 50, width: 50, borderRadius: 90}} 
-          source={require('./assets/personicon.png')}/>
-          <View style={{marginLeft: 15}}>
-            <Text style={{ color: 'white'}}>Welcome!</Text>
-            <Text style={{ color: 'white'}}>Donna</Text>
-          </View>
-        </View>
-        <Image source={require('./assets/ringicon.png')}/>
-      </View>
-
-      <View style={[styles.nav1, {paddingTop: 20}]}>
-        <Text style={{ color: 'black'}}>Category</Text>
-        <Image style={{height: 30, width: 30}} source={require('./assets/3gach.png')}/>
-      </View>
-
-      <FlatList
-          data={category}
-          renderItem={({ item }) => (
-          <TouchableOpacity style={[styles.categoryItem, {width: screenWidth / numColumns }]}>
-            <View style={styles.categoryIconContainer}>
-              <Image source={{ uri: item.image }} style={styles.categoryIcon}/>
-            </View>
-              <Text style={styles.categoryText}>{item.name}</Text>
-          </TouchableOpacity>
-          )}
-          numColumns={numColumns}
-      />
-
-      <View style={[styles.nav1, {marginTop: 10}]}>
-        <Text style={{ color: 'black'}}>Popular Destination</Text>
-        <Image style={{height: 30, width: 30}} source={require('./assets/3gach.png')}/>
-      </View>
-
-       <FlatList
-          data={location.slice(0, 3)}
-          renderItem={({ item }) => (
-          <TouchableOpacity>
-            <View style={{}}>
-              <Image source={{ uri: item.image }} style={styles.locationImage}/>
-            </View>
-          </TouchableOpacity>
-          )}
-          numColumns={numColumns}
-      />
-
-       <View style={[styles.nav1, {marginTop: 20}]}>
-        <Text style={{ color: 'black'}}>Recomended</Text>
-        <Image style={{height: 30, width: 30}} source={require('./assets/3gach.png')}/>
-      </View>
-
-       <FlatList
-          data={location.slice(3, 5)}
-          renderItem={({ item }) => (
-          <TouchableOpacity>
-            <View style={{alignItems: 'center', justifyContent: 'center'}}>
-              <Image source={{ uri: item.image }} style={styles.locationImage2}/>
-            </View>
-          </TouchableOpacity>
-          )}
-          contentContainerStyle={{justifyContent: 'center', alignItems: 'center'}}
-          numColumns={numColumns}
-      />
-
-       <View style={styles.bottomNav}>
-                   <TouchableOpacity style={styles.navItem}>
-                       <Image source={require('./assets/homeicon.png')} style={styles.navicon}/>
-                       <Text style={styles.navLabel}>Home</Text>
-                   </TouchableOpacity>
-
-                   <TouchableOpacity style={styles.navItem}>
-                       <Image source={require('./assets/exploreicon.png')} style={styles.navicon}/>
-                       <Text style={styles.navLabel}>Explore</Text>
-                   </TouchableOpacity>
-
-                   <TouchableOpacity style={styles.navItem}>
-                       <Image source={require('./assets/searchicon.png')} style={styles.navicon}/>
-                       <Text style={styles.navLabel}>Search</Text>
-                   </TouchableOpacity>
-
-                   <TouchableOpacity style={styles.navItem}>
-                       <Image source={require('./assets/profileicon.png')} style={styles.navicon}/>
-                       <Text style={styles.navLabel}>Profile</Text>
-                   </TouchableOpacity>
-        </View>
-
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName='Login' screenOptions={{headerShown: false}}>
+      <Stack.Screen 
+            name='Login' 
+            component={LoginScreen}
+          />
+        <Stack.Screen 
+            name='Home' 
+            component={TabNavigator}
+          />
+      </Stack.Navigator>
+  </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    paddingTop: 20,
-    flex: 1,
-    backgroundColor: '#fff',
-  }, header : {
-    marginTop: 30,
-    backgroundColor: '#5958b2',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 10
-  }, input : {
-    flex: 1,
-    borderColor: 'gray',
-    borderWidth: 1,
-    flexDirection: 'row',
-    backgroundColor: '#fff',
-    paddingHorizontal: 15,
-    paddingVertical: 5,
-    justifyContent: 'space-between',
-    marginLeft: 10,
-    borderRadius: 15
-  }, nav :{
-      backgroundColor: '#5958b2',
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent:'space-between',
-      paddingHorizontal: 15,
-      marginTop: -15,
-      paddingBottom: 20
-  }, nav1 :{
-      backgroundColor: '#fff',
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent:'space-between',
-      paddingHorizontal: 25,
-      marginTop: -15,
-      paddingBottom: 10
-  }, categoryItem: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginVertical: 10,
-  }, categoryIconContainer: {
-        width: 64,
-        height: 64,
-        borderRadius: 32,
-        backgroundColor: '#6C63FF',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },  categoryIcon:{
-        width: 64,
-        height: 64,
-    }, categoryText:{
-        marginTop: 8,
-        fontSize: 14,
-        color: '#333',
-        textAlign: 'center',
-    }, locationImage:{
-        width: 110,
-        height: 110,
-        margin: 10,
-        borderRadius: 10,
-    },locationImage2:{
-        width: 130,
-        height: 130,
-        margin: 10,
-        borderRadius: 10,
-    },    bottomNav:{
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        backgroundColor: '#5958b2',
-        padding: 25,
-    },
-    navItem:{
-        alignItems: 'center',
-    },
-    navLabel:{
-        color: '#fff',
-        fontSize: 14,
-        marginTop: 4,
-    },
-    navicon:{
-        width: 40,
-        height: 40,
-    },
-});

@@ -1,12 +1,13 @@
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, FlatList, Dimensions, ScrollView } from 'react-native';
 import axios from 'axios';
-
 import { useState, useEffect } from 'react';
 
-export default function App({navigation}) {
+export default function App({navagation, route}) {
 
   const [category, setCategory] = useState([]);
   const [location, setLocation] = useState([]);
+  const user  = route.params.userData;
+
   const screenWidth = Dimensions.get('window').width;
   useEffect(() => {
        axios.get('https://671d0c3909103098807c1347.mockapi.io/category').then((response) => {
@@ -19,7 +20,6 @@ export default function App({navigation}) {
   const numColumns = 4;
   return (
     <ScrollView style={styles.container}>
- 
       <View style={styles.header}>
         <Image source={require('../assets/logoicon.png')}/>
         <View style={styles.input}>
@@ -30,11 +30,13 @@ export default function App({navigation}) {
 
       <View style={styles.nav}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          {/* <Image style={{height: 50, width: 50, borderRadius: 90}} 
+          source={require('../assets/personicon.png')}/> */}
           <Image style={{height: 50, width: 50, borderRadius: 90}} 
-          source={require('../assets/personicon.png')}/>
+          source={{uri : user.avatar}}/>
           <View style={{marginLeft: 15}}>
             <Text style={{ color: 'white'}}>Welcome!</Text>
-            <Text style={{ color: 'white'}}>Donna</Text>
+            <Text style={{ color: 'white'}}>{user.name}</Text>
           </View>
         </View>
         <Image source={require('../assets/ringicon.png')}/>
@@ -105,7 +107,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 10
+    padding: 10,
+    paddingTop: 25
   }, input : {
     flex: 1,
     borderColor: 'gray',

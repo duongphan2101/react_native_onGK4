@@ -1,15 +1,34 @@
-import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, FlatList, Dimensions, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, Alert } from 'react-native';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/EvilIcons';
 
 import { useState, useEffect } from 'react';
 export default function App({navigation}) {
+  const [data, setData] = useState([]);
+  const fetchData = async () => {
+    try {
+      const response = await axios.get('http://192.168.1.47:3000/api/data');
+      setData(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
+  useEffect(() => {
+    fetchData();
+  }, []);
   const [user, setUser] = useState("");
   const [pass, setPass] = useState("");
+
   const handleLogin = () => {
-    navigation.navigate('Home');
+    const checkAccount = data.find(item => item.name === user && item.pass === pass);
+      if(checkAccount){
+        navigation.navigate('Home', {userData: checkAccount });
+    }else{
+      Alert.alert('Kiểm tra lại tài khoản và mật khẩu!');
+    }
   };
+  
   return (
     <View style={styles.container}>
         <View style={styles.logo}>
@@ -19,12 +38,13 @@ export default function App({navigation}) {
         <View style={styles.viewInput}>
             <View style={styles.input}>
                 <Icon name='user' size={30} color={'white'}/>
-                <TextInput style={{marginLeft: 10, flex: 1, paddingHorizontal: 10}} placeholder='user name'
-                 placeholderTextColor={'white'} underlineColorAndroid="transparent"/>
+                <TextInput style={{marginLeft: 10, flex: 1, paddingHorizontal: 10, color: 'white'}} placeholder='user name'
+                 placeholderTextColor={'white'} value={user} onChangeText={setUser}/>
             </View>
             <View style={styles.input}>
                 <Icon name='lock' size={30} color={'white'}/>
-                <TextInput style={{marginLeft: 10, flex: 1, paddingHorizontal: 10}} placeholder='password' placeholderTextColor={'white'}/>
+                <TextInput style={{marginLeft: 10, flex: 1, paddingHorizontal: 10, color: 'white'}} placeholder='password'
+                 placeholderTextColor={'white'} value={pass} onChangeText={setPass}/>
             </View>
 
             <TouchableOpacity style={styles.Touch} onPress={handleLogin}>
@@ -33,7 +53,7 @@ export default function App({navigation}) {
 
             <View style={styles.hr}/>
 
-            <TouchableOpacity style={{alignItems: 'center'}}>
+            <TouchableOpacity style={{alignItems: 'center'}} onPress={()=> navigation.navigate('Register')}>
                 <Text style={{fontSize: 13, color: 'white'}}>Register</Text>
             </TouchableOpacity>
         </View>
@@ -59,7 +79,8 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     padding: 10,
     flexDirection: 'row',
-    marginVertical: 10
+    marginVertical: 10,
+    color: 'white'
   }, Touch : {
     padding: 20,
     backgroundColor: '#474693',

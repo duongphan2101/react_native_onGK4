@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/EvilIcons';
 import { useState, useEffect } from 'react';
 export default function App({navigation}) {
   const [data, setData] = useState([]);
+  
   const fetchData = async () => {
     try {
       const response = await axios.get('http://192.168.1.47:3000/api/data');

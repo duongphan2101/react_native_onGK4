@@ -30,8 +30,6 @@ export default function App({navagation, route}) {
 
       <View style={styles.nav}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          {/* <Image style={{height: 50, width: 50, borderRadius: 90}} 
-          source={require('../assets/personicon.png')}/> */}
           <Image style={{height: 50, width: 50, borderRadius: 90}} 
           source={{uri : user.avatar}}/>
           <View style={{marginLeft: 15}}>

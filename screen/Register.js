@@ -1,3 +1,4 @@
+// register.js
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, Alert } from 'react-native';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/EvilIcons';
@@ -7,6 +8,25 @@ import { useState} from 'react';
 export default function App({navigation}) {
     const [user, setUser] = useState("");
     const [pass, setPass] = useState("");
+
+    const handleRegister = async () => {
+      try {
+        const response = await axios.post('http://192.168.1.47:3000/api/register', {
+          name: user,
+          pass: pass,
+          avatar: 'https://imgur.com/2SDsjlL.png'
+        });
+        Alert.alert("Đăng ký thành công!", response.data.message);
+        navigation.goBack();
+      } catch (error) {
+        if (error.response) {
+          Alert.alert("Lỗi", error.response.data.error || "Đăng ký thất bại");
+        } else {
+          Alert.alert("Lỗi", "Có lỗi xảy ra. Vui lòng thử lại sau.");
+        }
+      }
+    };    
+    
   return (
     <View style={styles.container}>
         <View style={styles.logo}>
@@ -17,15 +37,15 @@ export default function App({navigation}) {
             <View style={styles.input}>
                 <Icon name='user' size={30} color={'white'}/>
                 <TextInput style={{marginLeft: 10, flex: 1, paddingHorizontal: 10, color: 'white'}} 
-                placeholder='user name' placeholderTextColor={'white'} onChangeText={setUser}/>
+                placeholder='user name' placeholderTextColor={'white'} value={user} onChangeText={setUser}/>
             </View>
             <View style={styles.input}>
                 <Icon name='lock' size={30} color={'white'}/>
                 <TextInput style={{marginLeft: 10, flex: 1, paddingHorizontal: 10, color: 'white'}} 
-                placeholder='password' placeholderTextColor={'white'} onChangeText={setPass}/>
+                placeholder='password' placeholderTextColor={'white'} value={pass} onChangeText={setPass}/>
             </View>
 
-            <TouchableOpacity style={styles.Touch}>
+            <TouchableOpacity style={styles.Touch} onPress={handleRegister}>
                 <Text style={{fontSize: 24, fontWeight: 'bold', color: 'white'}}>Register</Text>
             </TouchableOpacity>
 

@@ -5,8 +5,8 @@ import Icon from 'react-native-vector-icons/EvilIcons.js';
 import Icon2 from 'react-native-vector-icons/FontAwesome';
 import HomeScreen from './screen/Home';
 import LoginScreen from './screen/Login';
-import RegisterScreen from './screen/Register';
-import ProfileScreen from './screen/Profile';
+import RegisterScreen from './screen/register';
+import ProfileScreen from './screen/profile';
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 

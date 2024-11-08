@@ -9,11 +9,10 @@ app.use(cors());
 app.use(express.json());
 
 const db = mysql.createConnection({
-  host: 'sql12.freesqldatabase.com',
-  user: 'sql12741067',
-  password: 'Chd3Y3UiH6',
-  database: 'sql12741067',
-  port: 3306,
+  host: '127.0.0.1',
+  user: 'root',
+  password: '123',
+  database: 'db_duong',
 });
 
 db.connect((err) => {
@@ -24,13 +23,19 @@ db.connect((err) => {
   console.log('Connected to MySQL database!');
 });
 
-app.get('/api/data', (req, res) => {
-  db.query('SELECT id, name, pass, avatar FROM user', (err, results) => {
-    if (err) {
-      return res.status(500).json({ error: 'Database query failed' });
-    }
-    res.json(results);
-  });
+app.get('/api/data', async (req, res) => {
+  try {
+    db.query('SELECT * FROM users', (err, results) => {  // Chỉnh sửa ở đây
+      if (err) {
+        console.error("Error during query:", err); // Ghi lại lỗi truy vấn
+        return res.status(500).json({ error: "Internal Server Error", message: err.message });
+      }
+      res.json(results);
+    });
+  } catch (error) {
+    console.error("Server error:", error); // Ghi lại lỗi server
+    res.status(500).json({ error: "Internal Server Error", message: error.message });
+  }
 });
 
 // Endpoint để đăng ký tài khoản
@@ -38,7 +43,7 @@ app.post('/api/register', (req, res) => {
   const { name, pass, avatar } = req.body;
 
   // Kiểm tra tên người dùng đã tồn tại hay chưa
-  const checkQuery = 'SELECT * FROM user WHERE name = ?';
+  const checkQuery = 'SELECT * FROM users WHERE name = ?';
   db.query(checkQuery, [name], (err, result) => {
     if (err) {
       console.error('Error in checkQuery:', err);
@@ -50,7 +55,7 @@ app.post('/api/register', (req, res) => {
     }
 
     // Thêm người dùng vào cơ sở dữ liệu
-    const insertQuery = 'INSERT INTO user (name, pass, avatar) VALUES (?, ?, ?)';
+    const insertQuery = 'INSERT INTO users (name, pass, avatar) VALUES (?, ?, ?)';
     db.query(insertQuery, [name, pass, avatar], (err, result) => {
       if (err) {
         console.error('Error in insertQuery:', err); // Log lỗi insert
@@ -67,7 +72,7 @@ app.put('/api/user/:id', (req, res) => {
   const userId = req.params.id;
   const { name, pass, avatar } = req.body;
 
-  const updateQuery = 'UPDATE user SET name = ?, pass = ?, avatar = ? WHERE id = ?';
+  const updateQuery = 'UPDATE users SET name = ?, pass = ?, avatar = ? WHERE id = ?';
   db.query(updateQuery, [name, pass, avatar, userId], (err, result) => {
     if (err) {
       console.error('Error updating user:', err);
@@ -85,7 +90,7 @@ app.delete('/api/users/delete/:id', (req, res) => {
   const userId = req.params.id;
   console.log(`Received request to delete user with ID: ${userId}`);
 
-  const deleteQuery = 'DELETE FROM user WHERE id = ?';
+  const deleteQuery = 'DELETE FROM users WHERE id = ?';
   db.query(deleteQuery, [userId], (err, result) => {
     if (err) {
       console.error('Error deleting user:', err);
@@ -99,7 +104,6 @@ app.delete('/api/users/delete/:id', (req, res) => {
     res.json({ message: 'User deleted successfully' });
   });
 });
-
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
